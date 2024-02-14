@@ -18,9 +18,9 @@ export default NuxtAuthHandler({
   providers: [
     // @ts-expect-error
     AzureADProvider.default({
-      clientId: process.env.AZURE_AD_CLIENT_ID,
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
-      tenantId: process.env.AZURE_AD_TENANT_ID,
+      clientId: runtimeConfig.AZURE_AD_CLIENT_ID,
+      clientSecret: runtimeConfig.AZURE_AD_CLIENT_SECRET,
+      tenantId: runtimeConfig.AZURE_AD_TENANT_ID,
       /*responseType: 'code',
       responseMode: 'query', */
       authorization: {
