@@ -1,5 +1,5 @@
 import { NuxtAuthHandler } from "#auth";
-import GoogleProvider from "next-auth/providers/google";
+import AzureADProvider from "next-auth/providers/azure-ad";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
@@ -15,23 +15,63 @@ export default NuxtAuthHandler({
   debug: process.env.NODE_ENV === "development",
   providers: [
     // @ts-expect-error
-    GoogleProvider.default({
-      clientId: useRuntimeConfig().public.GOOGLE_CLIENT_ID,
-      clientSecret: runtimeConfig.GOOGLE_CLIENT_SECRET,
+    AzureADProvider.default({
+      clientId: process.env.AZURE_AD_CLIENT_ID,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+      tenantId: process.env.AZURE_AD_TENANT_ID,
+      /*responseType: 'code',
+      responseMode: 'query', */
+      authorization: {
+        params: {
+          scope: `offline_access openid profile email`,
+        },
+      },
     }),
+  /*
+  GoogleProvider.default({
+    //  clientId: useRuntimeConfig().public.GOOGLE_CLIENT_ID,
+    //  clientSecret: runtimeConfig.GOOGLE_CLIENT_SECRET,
+    //}),
+  */  
   ],
   callbacks: {
+    /*
     session({ session, token }) {
       session.user.id = token.id;
       return session;
     },
-    jwt({ token, account, user }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.id = user?.id;
+    */
+    async session({ session, token }) {
+      if (session) {
+        session.user = token.user;
+        session.error = token.error;
+        session.accessToken = token.accessToken;
       }
-      return token;
+      return session;
     },
+    async jwt({ token, account, user }) {
+      if (account && user) {
+        token.accessToken = account.access_token;
+        token.accessTokenExpires = account?.expires_at
+            ? account.expires_at * 1000
+            : 0,
+        token.refreshToken = account.refresh_token;
+      }
+
+      if (Date.now() < token.accessTokenExpires) {
+        return token;
+      }
+      return refreshAccessToken(token);
+    },
+    /*
+    //jwt({ token, account, user }) {
+    //  if (account) {
+    //    token.accessToken = account.access_token;
+    //    token.id = user?.id;
+    //  }
+    //  return token;
+    //},
+    */
   },
   events: {
     createUser: async (message) => {
