@@ -6,6 +6,8 @@ import { PrismaClient } from "@prisma/client";
 const runtimeConfig = useRuntimeConfig();
 const prisma = new PrismaClient();
 
+/* NOTE AUTH ENV FILES LOADED FROM .env into nuxt.config.ts */
+
 export default NuxtAuthHandler({
   adapter: PrismaAdapter(prisma),
   secret: useRuntimeConfig().API_ROUTE_SECRET,
@@ -58,10 +60,15 @@ export default NuxtAuthHandler({
         token.refreshToken = account.refresh_token;
       }
 
+      return token;
+      
+      /*
       if (Date.now() < token.accessTokenExpires) {
         return token;
       }
       return refreshAccessToken(token);
+      */
+      
     },
     /*
     //jwt({ token, account, user }) {
