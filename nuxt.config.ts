@@ -22,7 +22,9 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    AZURE_AD_CLIENT_SECRET: process.env.AZURE_AD_CLIENT_SECRET,
+    AZURE_AD_CLIENT_ID: process.env.AZURE_AD_CLIENT_ID,
+    AZURE_AD_TENANT_ID: process.env.AZURE_AD_TENANT_ID,
     API_ROUTE_SECRET: process.env.API_ROUTE_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
@@ -32,9 +34,7 @@ export default defineNuxtConfig({
     BYESPAM_API_KEY: process.env.BYESPAM_API_KEY,
     public: {
       FROM_MAIL: process.env.FROM_MAIL,
-      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
       BASE_URL: process.env.BASE_URL,
-
       // SEO
       siteUrl: process.env.BASE_URL || "https://openformstack.com",
       siteName: "OpenformStack",
